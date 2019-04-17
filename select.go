@@ -1,110 +1,70 @@
 package buildsql
 
-import (
-	"fmt"
-	"strings"
-)
+import "fmt"
 
-// SelectStruct xx
-type SelectStruct struct {
-	publicAttribute
+// SelectBuilder select build 类
+type SelectBuilder struct {
+	// SqlBuilder sql绑定接口
+	SqlBuilder
+	// Ex 聚合函数
+	Ex expr
+	// WhereExpr
+	Wex whereExpr
+	// table 表名
+	table string
+	// columns 要获取的字段名称
 	columns []string
+	// where 条件
+	wheres []string
+	// orderBy 排序
+	orderBy map[string]string
+	// groupBy 分组
 	groupBy []string
-	having  []string
-	orderBy []string
-	limit   int
-	offSet  int
+}
+// NewSelectBuilder 实例化类
+func NewSelectBuilder() *SelectBuilder {
+
+	s := &SelectBuilder{}
+	s.Ex = newExprBuilder()
+	s.Wex = newWhereExprBuilder()
+	return s
+}
+// ToString 获取sql语句
+func (s SelectBuilder) ToString() string {
+	return "select"
+}
+// SetTable 设置表
+func (s *SelectBuilder) SetTable(table string) *SelectBuilder {
+
+	s.table = table
+	return s
 }
 
-// Where XX
-func (s *SelectStruct) Where(where string) {
-	s.where.setWhere(where)
-}
+// SetColumn 设置select的字段
+func (s *SelectBuilder) SetColumn(column ...string) *SelectBuilder{
 
-// SetColumn xx
-func (s *SelectStruct) SetColumn(column ...string) {
-	for _, v := range column {
-		s.columns = append(s.columns, fmt.Sprintf("%s", strings.TrimSpace(v)))
-	}
-
-}
-
-// GroupBy xx
-func (s *SelectStruct) GroupBy(column ...string) {
-	for _, v := range column {
-		s.groupBy = append(s.groupBy, v)
-	}
-}
-
-// Having xxx
-func (s *SelectStruct) Having(having ...string) {
-
-	for _, v := range having {
-		s.having = append(s.having, fmt.Sprintf("(%s)", v))
-	}
-
-}
-
-// OrderBy xx
-func (s *SelectStruct) OrderBy(column ...string) {
-
-	for _, v := range column {
-		s.orderBy = append(s.orderBy, v)
-	}
-}
-
-// Limit xx
-func (s *SelectStruct) Limit(limit int) {
-	s.limit = limit
-}
-
-// OffSet xx
-func (s *SelectStruct) OffSet(offSet int) {
-	s.offSet = offSet
-}
-
-// ToString xx
-func (s SelectStruct) ToString() string {
-
-	columns := "*"
-
-	if len(s.columns) > 0 {
-		columns = strings.Join(s.columns, ", ")
-	}
-
-	sql := fmt.Sprintf("SELECT %s", columns)
-
-	if s.tableName == "" {
-		// 表名字没有设置 后面where 之类的拼接是没有意义的
-		return sql
-	}
-
-	sql = fmt.Sprintf("%s FROM %s %s", sql, s.tableName, s.where.toString())
-
-	if len(s.groupBy) > 0 {
-		sql = fmt.Sprintf("%s GROUP BY %s", sql, strings.Join(s.groupBy, ", "))
-		// HAVING 配合 GROUP BY使用
-		if len(s.having) > 0 {
-			sql = fmt.Sprintf("%s HAVING %s", sql, strings.Join(s.having, " AND "))
+	if len(column) > 0 {
+		for _, v := range column{
+			s.columns = append(s.columns, v)
 		}
 	}
+	return s
+}
+// As 设置字段别名
+func (s *SelectBuilder) As(column, alias string) *SelectBuilder {
 
-	if len(s.orderBy) > 0 {
-		sql = fmt.Sprintf("%s ORDER BY %s", sql, strings.Join(s.orderBy, ", "))
-	}
+	s.columns = append(s.columns, fmt.Sprintf("%s AS %s", column, alias))
+	return s
+}
+// Where 条件设置
+func (s *SelectBuilder) Where(expr ...string) *SelectBuilder {
 
-	if s.limit > 0 {
-		sql = fmt.Sprintf("%s LIMIT %d", sql, s.limit)
-		// limit 设置了才会拼接 offset 否则 值设置 offset 没有意义
-		if s.offSet > 0 {
-			sql = fmt.Sprintf("%s OFFSET %d", sql, s.offSet)
+	if len(expr) > 0 {
+		for _, v := range expr{
+			if v != "" {
+				s.wheres = append(s.wheres, fmt.Sprintf("(%s)", v))
+			}
 		}
 	}
-
-	return sql
-}
-
-// Table xx
-func (s *SelectStruct) Table(table string) {
-	s.tableName = table
+	return s
 }
