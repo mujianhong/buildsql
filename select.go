@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// SelectBuilder select build 类
-type SelectBuilder struct {
+// selectBuilder select build 类
+type selectBuilder struct {
 	// SQLBuilder sql绑定接口
 	SQLBuilder
 	// Ex 聚合函数
@@ -34,9 +34,9 @@ type SelectBuilder struct {
 }
 
 // NewSelectBuilder 实例化类
-func NewSelectBuilder() *SelectBuilder {
+func NewSelectBuilder() *selectBuilder {
 
-	s := &SelectBuilder{}
+	s := &selectBuilder{}
 	s.Ex = newExprBuilder()
 	s.Wex = newWhereExprBuilder()
 	s.table = ""
@@ -46,7 +46,7 @@ func NewSelectBuilder() *SelectBuilder {
 }
 
 // ToString 获取sql语句
-func (s SelectBuilder) ToString() string {
+func (s selectBuilder) ToString() string {
 
 	sql := "SELECT %s FROM %s %s %s %s %s"
 
@@ -79,6 +79,7 @@ func (s SelectBuilder) ToString() string {
 	if len(s.orderBy) > 0 {
 		orderByArr := []string{}
 		for column, order := range s.orderBy {
+			//fmt.Println(column)
 			orderByArr = append(orderByArr, fmt.Sprintf("%s %s", column, order))
 		}
 
@@ -99,7 +100,7 @@ func (s SelectBuilder) ToString() string {
 }
 
 // Limit 设置分页开始
-func (s *SelectBuilder) Limit(limit int) *SelectBuilder {
+func (s *selectBuilder) Limit(limit int) *selectBuilder {
 
 	s.limit = limit
 	s.isSetLimit = true
@@ -107,20 +108,20 @@ func (s *SelectBuilder) Limit(limit int) *SelectBuilder {
 }
 
 // Offset 设置分页结束 同 Limit 组合使用
-func (s *SelectBuilder) Offset(offset int) *SelectBuilder {
+func (s *selectBuilder) Offset(offset int) *selectBuilder {
 
 	s.offset = offset
 	return s
 }
 
 // SetPage 设置分页
-func (s *SelectBuilder) SetPage(limit, offset int) *SelectBuilder {
+func (s *selectBuilder) SetPage(limit, offset int) *selectBuilder {
 
 	return s.Limit(limit).Offset(offset)
 }
 
 // GroupBy 分组
-func (s *SelectBuilder) GroupBy(column ...string) *SelectBuilder {
+func (s *selectBuilder) GroupBy(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
@@ -131,7 +132,7 @@ func (s *SelectBuilder) GroupBy(column ...string) *SelectBuilder {
 }
 
 // Having Having添加 同group by组合使用
-func (s *SelectBuilder) Having(column ...string) *SelectBuilder {
+func (s *selectBuilder) Having(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
@@ -142,7 +143,7 @@ func (s *SelectBuilder) Having(column ...string) *SelectBuilder {
 }
 
 // OrderBy 排序 正叙
-func (s *SelectBuilder) OrderBy(column ...string) *SelectBuilder {
+func (s *selectBuilder) OrderBy(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
@@ -153,7 +154,7 @@ func (s *SelectBuilder) OrderBy(column ...string) *SelectBuilder {
 }
 
 // OrderByDesc 排序 倒叙
-func (s *SelectBuilder) OrderByDesc(column ...string) *SelectBuilder {
+func (s *selectBuilder) OrderByDesc(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
@@ -164,14 +165,14 @@ func (s *SelectBuilder) OrderByDesc(column ...string) *SelectBuilder {
 }
 
 // SetTable 设置表
-func (s *SelectBuilder) SetTable(table string) *SelectBuilder {
+func (s *selectBuilder) SetTable(table string) *selectBuilder {
 
 	s.table = table
 	return s
 }
 
 // SetColumn 设置select的字段
-func (s *SelectBuilder) SetColumn(column ...string) *SelectBuilder {
+func (s *selectBuilder) SetColumn(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
@@ -182,14 +183,14 @@ func (s *SelectBuilder) SetColumn(column ...string) *SelectBuilder {
 }
 
 // As 设置字段别名
-func (s *SelectBuilder) As(column, alias string) *SelectBuilder {
+func (s *selectBuilder) As(column, alias string) *selectBuilder {
 
 	s.columns = append(s.columns, fmt.Sprintf("%s AS %s", column, alias))
 	return s
 }
 
 // Where 条件设置
-func (s *SelectBuilder) Where(expr ...string) *SelectBuilder {
+func (s *selectBuilder) Where(expr ...string) *selectBuilder {
 
 	if len(expr) > 0 {
 		for _, v := range expr {

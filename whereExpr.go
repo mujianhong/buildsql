@@ -7,20 +7,20 @@ import (
 )
 
 const (
-	equal         = "="
+	equal        = "="
 	notEqual     = "!="
-	greater       = ">"
+	greater      = ">"
 	greaterEqual = ">="
-	less          = "<"
+	less         = "<"
 	lessEqual    = "<="
-	between       = "BETWEEN"
-	and           = "AND"
-	like          = "LIKE"
-	not           = "NOT"
-	in            = "IN"
-	or            = "OR"
-	null          = "NULL"
-	is            = "IS"
+	between      = "BETWEEN"
+	and          = "AND"
+	like         = "LIKE"
+	not          = "NOT"
+	in           = "IN"
+	or           = "OR"
+	null         = "NULL"
+	is           = "IS"
 )
 
 type whereExpr struct {
@@ -123,6 +123,7 @@ func (ex whereExpr) NotIsNull(column string) string {
 	return fmt.Sprintf("%s %s %s %s", column, not, is, null)
 
 }
+
 func (ex whereExpr) toString(column, operator string, value interface{}) string {
 
 	return fmt.Sprintf("%s %s %s", column, operator, ex.conversion(value))
@@ -154,8 +155,8 @@ func (ex whereExpr) conversion(value interface{}) string {
 			arr = append(arr, strconv.Itoa(v))
 		}
 		return fmt.Sprintf("%s", strings.Join(arr, ", "))
-	case *SelectBuilder:
-		s := value.(*SelectBuilder)
+	case *selectBuilder:
+		s := value.(*selectBuilder)
 		return fmt.Sprintf("%s", s.ToString())
 	}
 

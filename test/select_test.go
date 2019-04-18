@@ -12,7 +12,7 @@ var echoRand = func(str string) string {
 
 func TestNewSelectBuilder(t *testing.T) {
 	se := buildsql.NewSelectBuilder()
-	if fmt.Sprintf("%T", se) != "*buildsql.SelectBuilder" {
+	if fmt.Sprintf("%T", se) != "*buildsql.selectBuilder" {
 		t.Error("Structural error")
 	}
 }
