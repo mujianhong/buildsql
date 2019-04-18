@@ -33,18 +33,6 @@ type selectBuilder struct {
 	isSetLimit bool
 }
 
-// NewSelectBuilder 实例化类
-func NewSelectBuilder() *selectBuilder {
-
-	s := &selectBuilder{}
-	s.Ex = newExprBuilder()
-	s.Wex = newWhereExprBuilder()
-	s.table = ""
-	s.orderBy = map[string]string{}
-	s.isSetLimit = false
-	return s
-}
-
 // ToString 获取sql语句
 func (s selectBuilder) ToString() string {
 
@@ -185,7 +173,7 @@ func (s *selectBuilder) SetColumn(column ...string) *selectBuilder {
 // As 设置字段别名
 func (s *selectBuilder) As(column, alias string) *selectBuilder {
 
-	s.columns = append(s.columns, fmt.Sprintf("%s AS %s", column, alias))
+	s.SetColumn(fmt.Sprintf("%s AS %s", column, alias))
 	return s
 }
 
