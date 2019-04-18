@@ -1,5 +1,5 @@
 package buildsql
-
-type SqlBuilder interface {
+// SQLBuilder Builder接口
+type SQLBuilder interface {
 	ToString() string
 }
