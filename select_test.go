@@ -147,14 +147,9 @@ func TestSelectBuilder_OrderBy(t *testing.T) {
 		t.Errorf("order size is %d se.orderBy size is %d", len(order), len(se.orderBy))
 	}
 
-	orderBy := []string{}
-	for k, v := range se.orderBy {
-		orderBy = append(orderBy, fmt.Sprintf("%s%s", k, v))
-	}
-
 	for k, v := range order {
-		if orderBy[k] != fmt.Sprintf("%s%s", v, "ASC") {
-			t.Errorf("orderBy[k] is %s hope is %s", orderBy[k], fmt.Sprintf("%s%s", v, "ASC"))
+		if se.orderBy[k] != fmt.Sprintf("%s %s", v, "ASC") {
+			t.Errorf("orderBy[k] is %s hope is %s", se.orderBy[k], fmt.Sprintf("%s%s", v, "ASC"))
 		}
 	}
 }
@@ -177,14 +172,9 @@ func TestSelectBuilder_OrderByDesc(t *testing.T) {
 		t.Errorf("order size is %d se.orderBy size is %d", len(order), len(se.orderBy))
 	}
 
-	orderBy := []string{}
-	for k, v := range se.orderBy {
-		orderBy = append(orderBy, fmt.Sprintf("%s%s", k, v))
-	}
-
 	for k, v := range order {
-		if orderBy[k] != fmt.Sprintf("%s%s", v, "DESC") {
-			t.Errorf("orderBy[k] is %s hope is %s", orderBy[k], fmt.Sprintf("%s%s", v, "DESC"))
+		if se.orderBy[k] != fmt.Sprintf("%s %s", v, "DESC") {
+			t.Errorf("orderBy[k] is %s hope is %s", se.orderBy[k], fmt.Sprintf("%s%s", v, "DESC"))
 		}
 	}
 }
@@ -220,7 +210,7 @@ func TestSelectBuilder_SetColumn(t *testing.T) {
 	}
 
 	for k, v := range se.columns {
-		if column[k] == v {
+		if column[k] != v {
 			t.Errorf("se.columns[%d] is %s hope is %s", k, v, column[k])
 		}
 	}

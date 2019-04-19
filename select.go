@@ -20,7 +20,7 @@ type selectBuilder struct {
 	// where 条件
 	wheres []string
 	// orderBy 排序
-	orderBy map[string]string
+	orderBy []string
 	// groupBy 分组
 	groupBy []string
 	// having
@@ -65,13 +65,8 @@ func (s selectBuilder) ToString() string {
 	orderBy := ""
 
 	if len(s.orderBy) > 0 {
-		orderByArr := []string{}
-		for column, order := range s.orderBy {
-			//fmt.Println(column)
-			orderByArr = append(orderByArr, fmt.Sprintf("%s %s", column, order))
-		}
 
-		orderBy = fmt.Sprintf("ORDER BY %s", strings.Join(orderByArr, ", "))
+		orderBy = fmt.Sprintf("ORDER BY %s", strings.Join(s.orderBy, ", "))
 	}
 
 	limit := ""
@@ -135,7 +130,7 @@ func (s *selectBuilder) OrderBy(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
-			s.orderBy[v] = "ASC"
+			s.orderBy = append(s.orderBy , fmt.Sprintf("%s ASC", v))
 		}
 	}
 	return s
@@ -146,7 +141,7 @@ func (s *selectBuilder) OrderByDesc(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
-			s.orderBy[v] = "DESC"
+			s.orderBy = append(s.orderBy , fmt.Sprintf("%s DESC", v))
 		}
 	}
 	return s

@@ -5,6 +5,11 @@ type SQLBuilder interface {
 	ToString() string
 }
 
+func newExprBuilder() expr {
+	ex := expr{}
+	return ex
+}
+
 // NewSelectBuilder 实例化类
 func NewSelectBuilder() *selectBuilder {
 
@@ -12,7 +17,6 @@ func NewSelectBuilder() *selectBuilder {
 	s.Ex = newExprBuilder()
 	s.Wex = newWhereExprBuilder()
 	s.table = ""
-	s.orderBy = map[string]string{}
 	s.isSetLimit = false
 	return s
 }

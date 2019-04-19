@@ -7,11 +7,6 @@ import (
 type expr struct {
 }
 
-func newExprBuilder() expr {
-	ex := expr{}
-	return ex
-}
-
 // Sum 聚合函数
 func (ex expr) Sum(column, alias string) string {
 
@@ -44,9 +39,9 @@ func (ex expr) Avg(column, alias string) string {
 func (ex expr) Max(column, alias string) string {
 
 	if alias != "" {
-		return fmt.Sprintf("Max(%s) AS %s", column, alias)
+		return fmt.Sprintf("MAX(%s) AS %s", column, alias)
 	}
-	return fmt.Sprintf("Max(%s)", column)
+	return fmt.Sprintf("MAX(%s)", column)
 }
 
 // Min 聚合函数
