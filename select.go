@@ -9,16 +9,12 @@ import (
 type selectBuilder struct {
 	// SQLBuilder sql绑定接口
 	SQLBuilder
+	// SQLStruct sql 公共字段
+	sqlStruct
 	// Ex 聚合函数
 	Ex expr
 	// WhereExpr
 	Wex whereExpr
-	// table 表名
-	table string
-	// columns 要获取的字段名称
-	columns []string
-	// where 条件
-	wheres []string
 	// orderBy 排序
 	orderBy []string
 	// groupBy 分组
@@ -130,7 +126,7 @@ func (s *selectBuilder) OrderBy(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
-			s.orderBy = append(s.orderBy , fmt.Sprintf("%s ASC", v))
+			s.orderBy = append(s.orderBy, fmt.Sprintf("%s ASC", v))
 		}
 	}
 	return s
@@ -141,7 +137,7 @@ func (s *selectBuilder) OrderByDesc(column ...string) *selectBuilder {
 
 	if len(column) > 0 {
 		for _, v := range column {
-			s.orderBy = append(s.orderBy , fmt.Sprintf("%s DESC", v))
+			s.orderBy = append(s.orderBy, fmt.Sprintf("%s DESC", v))
 		}
 	}
 	return s

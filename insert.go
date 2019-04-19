@@ -1,25 +1,37 @@
 package buildsql
 
+import (
+	"fmt"
+	"strings"
+)
+
 type insertBuilder struct {
 	//
 	SQLBuilder
 	//
-	table string
+	sqlStruct
 	//
 	se selectBuilder
-	//
-	vaules []string
-	//
-	columns []string
-}
 
-func NewInsertBuilder() *insertBuilder {
-	i := &insertBuilder{}
-	return i
+	isSetSelect bool
+
+	vaules []string
 }
 
 // 获取sql
 func (i insertBuilder) ToString() string {
+
+	sql := "INSERT INTO %s %s"
+
+	if len(i.columns) > 0 {
+		sql = strings.TrimSpace(fmt.Sprintf(sql, i.table, fmt.Sprintf("(%s)", strings.Join(i.columns, ", "))))
+	} else {
+		sql = strings.TrimSpace(fmt.Sprintf(sql, i.table, ""))
+	}
+
+	if i.isSetSelect {
+		return fmt.Sprintf("%s (%s)", sql, i.se.ToString())
+	}
 
 	return ""
 }
@@ -28,6 +40,7 @@ func (i insertBuilder) ToString() string {
 func (i *insertBuilder) SetSelectBuilder(se selectBuilder) *insertBuilder {
 
 	i.se = se
+	i.isSetSelect = true
 	return i
 }
 

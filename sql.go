@@ -5,6 +5,14 @@ type SQLBuilder interface {
 	ToString() string
 }
 
+type sqlStruct struct {
+	table string
+	// columns
+	columns []string
+	// where
+	wheres []string
+}
+
 func newExprBuilder() expr {
 	ex := expr{}
 	return ex
@@ -19,4 +27,10 @@ func NewSelectBuilder() *selectBuilder {
 	s.table = ""
 	s.isSetLimit = false
 	return s
+}
+
+func NewInsertBuilder() *insertBuilder {
+	i := &insertBuilder{}
+	i.isSetSelect = false
+	return i
 }
