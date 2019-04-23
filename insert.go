@@ -33,7 +33,13 @@ func (i insertBuilder) ToString() string {
 		return fmt.Sprintf("%s (%s)", sql, i.se.ToString())
 	}
 
-	return ""
+	if len(i.vaules) == 0 {
+		return ""
+	}
+
+	value := fmt.Sprintf("VALUES %s", strings.Join(i.vaules, ", "))
+
+	return fmt.Sprintf("%s %s", sql, value)
 }
 
 // SetSelectBuilder 设置 select语句
@@ -59,5 +65,26 @@ func (i *insertBuilder) SetColumns(column ...string) *insertBuilder {
 			i.columns = append(i.columns, v)
 		}
 	}
+	return i
+}
+
+func (i *insertBuilder) value(value string) *insertBuilder {
+
+	i.vaules = append(i.vaules, fmt.Sprintf("(%s)", value))
+
+	return i
+}
+
+func (i *insertBuilder) SetValues(values ...interface{}) *insertBuilder {
+
+	if len(values) > 0 {
+		value := []string{}
+		for _, v := range values {
+			value = append(value, conversion(v))
+		}
+
+		return i.value(strings.Join(value, ", "))
+	}
+
 	return i
 }

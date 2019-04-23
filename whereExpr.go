@@ -2,8 +2,6 @@ package buildsql
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 )
 
 const (
@@ -70,13 +68,13 @@ func (ex whereExpr) LessThanEqualThan(column string, value interface{}) string {
 // Between 在某个范围内 [column] Between [greater] AND [less]
 func (ex whereExpr) Between(column string, greater, less interface{}) string {
 
-	return fmt.Sprintf("%s %s %s %s %s", column, between, ex.conversion(greater), and, ex.conversion(less))
+	return fmt.Sprintf("%s %s %s %s %s", column, between, conversion(greater), and, conversion(less))
 }
 
 // NotBetween 不在某个范围内 [column] Between [greater] AND [less]
 func (ex whereExpr) NotBetween(column string, greater, less interface{}) string {
 
-	return fmt.Sprintf("%s %s %s %s %s %s", column, not, between, ex.conversion(greater), and, ex.conversion(less))
+	return fmt.Sprintf("%s %s %s %s %s %s", column, not, between, conversion(greater), and, conversion(less))
 }
 
 // LIKE 搜索某种模式 column like "value"
@@ -94,13 +92,13 @@ func (ex whereExpr) NotLike(column, value string) string {
 // In in查询
 func (ex whereExpr) In(column string, value interface{}) string {
 
-	return fmt.Sprintf("%s %s (%s)", column, in, ex.conversion(value))
+	return fmt.Sprintf("%s %s (%s)", column, in, conversion(value))
 }
 
 // NotIn in查询
 func (ex whereExpr) NotIn(column string, value interface{}) string {
 
-	return fmt.Sprintf("%s %s %s (%s)", column, not, in, ex.conversion(value))
+	return fmt.Sprintf("%s %s %s (%s)", column, not, in, conversion(value))
 }
 
 // OR in查询
@@ -126,39 +124,6 @@ func (ex whereExpr) NotIsNull(column string) string {
 
 func (ex whereExpr) toString(column, operator string, value interface{}) string {
 
-	return fmt.Sprintf("%s %s %s", column, operator, ex.conversion(value))
+	return fmt.Sprintf("%s %s %s", column, operator, conversion(value))
 }
 
-func (ex whereExpr) conversion(value interface{}) string {
-
-	switch value.(type) {
-	case bool:
-		if value == true {
-			return "true"
-		}
-		return "false"
-	case uint, uint8, uint16, uint32, uint64, int, int8, int16, int32, int64:
-		return fmt.Sprintf("%d", value)
-	case float32, float64:
-		return fmt.Sprintf("%f", value)
-	case string:
-		return fmt.Sprintf("'%s'", value)
-	case []string:
-		arr := []string{}
-		for _, v := range value.([]string) {
-			arr = append(arr, fmt.Sprintf("'%s'", v))
-		}
-		return fmt.Sprintf("%s", strings.Join(arr, ", "))
-	case []uint, []uint8, []uint16, []uint32, []uint64, []int, []int8, []int16, []int32, []int64:
-		arr := []string{}
-		for _, v := range value.([]int) {
-			arr = append(arr, strconv.Itoa(v))
-		}
-		return fmt.Sprintf("%s", strings.Join(arr, ", "))
-	case *selectBuilder:
-		s := value.(*selectBuilder)
-		return fmt.Sprintf("%s", s.ToString())
-	}
-
-	return ""
-}
